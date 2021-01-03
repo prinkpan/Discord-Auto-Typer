@@ -8,6 +8,8 @@ Public Class Form1
     Dim delayDone As Boolean = False
     Dim isActive As Boolean
     Dim cancel = False
+    Dim maxCommandCount = 0
+    Dim random As New Random
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         timeDisplayLabel.Text = "Not running."
@@ -15,16 +17,24 @@ Public Class Form1
     End Sub
 
     Private Sub timerStart_Click(sender As Object, e As EventArgs) Handles timerStart.Click
+        maxCommandCount = 0
         StartType()
     End Sub
 
     Private Sub StartType()
-        If timer.Enabled = False Then
-            If IsNumeric(intervalInput.Text) Then
-                interval = Int(intervalInput.Text)
-                i = 0
-                timeDisplayLabel.Text = "Typing in " + (interval - i).ToString() + " Seconds"
-                timer.Enabled = True
+        Dim remainingCount As Integer = Convert.ToInt32(CommandCountInput.Text) - maxCommandCount
+        countRemaining.Text = remainingCount.ToString() + " remaining"
+        maxCommandCount += 1
+        If maxCommandCount > Convert.ToInt32(CommandCountInput.Text) Then
+            Reset()
+        Else
+            If timer.Enabled = False Then
+                If IsNumeric(intervalInput.Text) AndAlso IsNumeric(intervalInputMax.Text) Then
+                    interval = random.Next(Int(intervalInput.Text), Int(intervalInputMax.Text))
+                    i = 0
+                    timeDisplayLabel.Text = "Typing in " + (interval - i).ToString() + " Seconds"
+                    timer.Enabled = True
+                End If
             End If
         End If
     End Sub
